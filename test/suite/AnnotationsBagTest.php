@@ -66,6 +66,92 @@ class AnnotationBagTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(100, $description->employees);
 	}
 	
+	public function testAnnotationArguments() {
+		$reflectionClass = new \ReflectionClass('Omocha\Fixtures\ComponentFixture');
+		$annotationBag = Omocha::getAnnotations($reflectionClass);
+		
+		$this->assertTrue($annotationBag->has('Type'));
+		$this->assertTrue($annotationBag->get('Type')->getValue());
+		$this->assertEquals("controller", $annotationBag->get('Type')->getArgument());
+
+		$this->assertTrue($annotationBag->has('Attr'));
+		$this->assertEquals("integer", $annotationBag->get('Attr')->getValue());
+		$this->assertEquals('#id', $annotationBag->get('Attr')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Option'));
+		$options = $annotationBag->find('Option');
+		$this->assertInternalType('array', $options);
+		$this->assertCount(3, $options);
+	
+		$output = $annotationBag->find('Option', Filter::HAS_ARGUMENT | Filter::TYPE_STRING)[0];
+		$this->assertEquals('json', $output->getValue());
+		$this->assertEquals('output', $output->getArgument());
+		
+		$limit = $annotationBag->find('Option', Filter::HAS_ARGUMENT | Filter::TYPE_INTEGER)[0];
+		$this->assertEquals(10, $limit->getValue());
+		$this->assertEquals('limit', $limit->getArgument());
+		
+		$amount = $annotationBag->find('Option', Filter::HAS_ARGUMENT | Filter::TYPE_FLOAT)[0];
+		$this->assertEquals(5.67, $amount->getValue());
+		$this->assertEquals('amount', $amount->getArgument());
+		
+		$id = $reflectionClass->getProperty('id');
+		$annotationBag = Omocha::getAnnotations($id);
+		
+		$this->assertTrue($annotationBag->has('Is'));
+		$this->assertTrue($annotationBag->get('Is')->getValue());
+		$this->assertEquals('int?', $annotationBag->get('Is')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Check'));
+		$this->assertTrue($annotationBag->get('Check')->getValue());
+		$this->assertEquals('!negative', $annotationBag->get('Check')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('PrintAs'));
+		$this->assertTrue($annotationBag->get('PrintAs')->getValue());
+		$this->assertEquals('{{ID}}', $annotationBag->get('PrintAs')->getArgument());
+		
+		$amount = $reflectionClass->getProperty('amount');
+		$annotationBag = Omocha::getAnnotations($amount);
+		
+		$this->assertTrue($annotationBag->has('Higher'));
+		$this->assertFalse($annotationBag->get('Higher')->getValue());
+		$this->assertEquals('25%', $annotationBag->get('Higher')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Add'));
+		$this->assertEquals('total', $annotationBag->get('Add')->getValue());
+		$this->assertEquals('+5', $annotationBag->get('Add')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Check'));
+		$this->assertEquals(100, $annotationBag->get('Check')->getValue());
+		$this->assertEquals('size<', $annotationBag->get('Check')->getArgument());
+		
+		$name = $reflectionClass->getProperty('name');
+		$annotationBag = Omocha::getAnnotations($name);
+		
+		$this->assertTrue($annotationBag->has('Regex'));
+		$this->assertTrue($annotationBag->get('Regex')->getValue());
+		$this->assertEquals('/^ema/', $annotationBag->get('Regex')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Append'));
+		$this->assertTrue($annotationBag->get('Append')->getValue());
+		$this->assertEquals('.lastName', $annotationBag->get('Append')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Check'));
+		$this->assertEquals(7, $annotationBag->get('Check')->getValue());
+		$this->assertEquals('length>', $annotationBag->get('Check')->getArgument());
+		
+		$action = $reflectionClass->getMethod('action');
+		$annotationBag = Omocha::getAnnotations($action);
+		
+		$this->assertTrue($annotationBag->has('Inject'));
+		$this->assertEquals('foo', $annotationBag->get('Inject')->getValue());
+		$this->assertEquals('$bar', $annotationBag->get('Inject')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Return'));
+		$this->assertTrue($annotationBag->get('Return')->getValue());
+		$this->assertEquals('*string', $annotationBag->get('Return')->getArgument());
+	}
+	
 	public function testClassAnnotations() {
 		$annotationBag = Omocha::getAnnotations($this->reflectionClass);
 		$this->assertInstanceOf('Omocha\AnnotationBag', $annotationBag);

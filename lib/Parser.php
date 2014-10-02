@@ -6,7 +6,7 @@ class Parser {
 	 * Annotation pattern
 	 * @var string
 	 */
-	const ANNOTATION_PATTERN = '/(?<=\\@)([a-zA-Z\_\-\\\][a-zA-Z0-9\_\-\.\\\]*)(\([a-zA-Z0-9:\_\-\.\\\]*\))?(((?!\s\\@).)*)/s';
+	const ANNOTATION_PATTERN = '/(?<=\\@)([a-zA-Z\_\-\\\][a-zA-Z0-9\_\-\.\\\]*)(\([^\)]*\))?(((?!\s\\@).)*)/s';
 	
 	/**
 	 * Doc comment to parse

@@ -56,7 +56,7 @@ class AnnotationBag implements \IteratorAggregate, \Countable, \JsonSerializable
 	/**
 	 * Retrieves a single annotation
 	 * @param string $key
-	 * @return array|NULL
+	 * @return Annotation|NULL
 	 */
 	public function get($key) {
 		if ($this->has($key)) {
