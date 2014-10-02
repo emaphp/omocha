@@ -84,7 +84,7 @@ class AnnotationBag implements \IteratorAggregate, \Countable, \JsonSerializable
 				continue;
 			}
 			
-			$annotation = $this->attributes[$index];
+			$annotation = $this->annotations[$index];
 			$flags = 0;
 			
 			//match value type

@@ -1,7 +1,7 @@
 {
-    "name": "emaphp/omocha",
+    "name": "omocha/omocha",
     "type": "library",
-    "description": "PHP Annotations Library",
+    "description": "Simple annotation parser",
     "keywords": ["php", "annotations", "reflection", "metadata", "docblock"],
     "license": "Apache License 2.0",
     "authors": [
