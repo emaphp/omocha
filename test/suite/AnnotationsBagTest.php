@@ -9,12 +9,61 @@ use Omocha\Omocha;
  * @author emaphp
  */
 class AnnotationBagTest extends \PHPUnit_Framework_TestCase {
-	private $fixture;
 	private $reflectionClass;
 	
 	public function setUp() {
-		$this->fixture = new UserFixture();
-		$this->reflectionClass = new \ReflectionClass($this->fixture);
+		$this->reflectionClass = new \ReflectionClass('Omocha\Fixtures\UserFixture');
+	}
+	
+	public function testAnnotationValues() {
+		$reflectionClass = new \ReflectionClass('Omocha\Fixtures\CarFixture');
+		$annotationBag = Omocha::getAnnotations($reflectionClass);
+		
+		$this->assertTrue($annotationBag->has('Toy'));
+		$this->assertTrue($annotationBag->get('Toy')->getValue());
+		$this->assertNull($annotationBag->get('Toy')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Remote'));
+		$this->assertFalse($annotationBag->get('Remote')->getValue());
+		$this->assertNull($annotationBag->get('Remote')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('MadeOf'));
+		$this->assertEquals("plastic", $annotationBag->get('MadeOf')->getValue());
+		$this->assertNull($annotationBag->get('MadeOf')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Stock'));
+		$this->assertEquals(50, $annotationBag->get('Stock')->getValue());
+		$this->assertNull($annotationBag->get('Stock')->getArgument());
+		
+		$this->assertTrue($annotationBag->has('Price'));
+		$this->assertEquals(45.57, $annotationBag->get('Price')->getValue());
+		$this->assertNull($annotationBag->get('Price')->getArgument());
+		
+		$capacity = $reflectionClass->getProperty('capacity');
+		$annotationBag = Omocha::getAnnotations($capacity);
+		
+		$this->assertTrue($annotationBag->has('Passengers'));
+		$this->assertNull($annotationBag->get('Passengers')->getArgument());
+		$arr = $annotationBag->get('Passengers')->getValue();
+		$this->assertInternalType('array', $arr);
+		$this->assertCount(3, $arr);
+		$this->assertContains('Spiderman', $arr);
+		$this->assertContains('Hulk', $arr);
+		$this->assertContains('Penguin', $arr);
+		
+		$manufacturer = $reflectionClass->getProperty('manufacturer');
+		$annotationBag = Omocha::getAnnotations($manufacturer);
+		
+		$this->assertTrue($annotationBag->has('Description'));
+		$this->assertNull($annotationBag->get('Description')->getArgument());
+		$description = $annotationBag->get('Description')->getValue();
+		$this->assertInstanceOf('stdClass', $description);
+		$this->assertObjectHasAttribute('name', $description);
+		$this->assertEquals('Toy-R-Us', $description->name);
+		$this->assertObjectHasAttribute('location', $description);
+		$this->assertEquals("US", $description->location);
+		$this->assertObjectHasAttribute('employees', $description);
+		$this->assertEquals(100, $description->employees);
 	}
 	
 	public function testClassAnnotations() {
