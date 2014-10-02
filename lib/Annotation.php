@@ -1,7 +1,7 @@
 <?php
 namespace Omocha;
 
-class Annotation {
+class Annotation implements \JsonSerializable {
 	/**
 	 * Annotation name
 	 * @var string
@@ -55,6 +55,21 @@ class Annotation {
 	 */
 	public function getArgument() {
 		return $this->argument;
+	}
+	
+	public function jsonSerialize() {
+		if (!is_null($this->argument)) {
+			return [
+				'name' => $this->name,
+				'argument' => $this->argument,
+				'value' => $this->value
+			];
+		}
+		
+		return [
+			'name' => $this->name,
+			'value' => $this->value
+		];
 	}
 }
 ?>
