@@ -1,0 +1,19 @@
+{
+    "name": "emaphp/omocha",
+    "type": "library",
+    "description": "PHP Annotations Library",
+    "keywords": ["php", "annotations", "reflection", "metadata", "docblock"],
+    "license": "Apache License 2.0",
+    "authors": [
+        {
+            "name": "Emmanuel Antico",
+            "email": "emmanuel.antico@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": { "Omocha\\": "lib/" }
+    }
+}
