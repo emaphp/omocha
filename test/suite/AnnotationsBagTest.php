@@ -309,5 +309,44 @@ class AnnotationBagTest extends \PHPUnit_Framework_TestCase {
 		$this->assertCount(1, $parameters);
 		$this->assertEquals(7.5, $parameters[0]->getValue());
 	}
+	
+	public function testExample() {
+		$reflectionClass = new \ReflectionClass('Omocha\Fixtures\WebserviceFixture');
+		$annotationBag = Omocha::getAnnotations($reflectionClass);
+		
+		$this->assertCount(5, $annotationBag);
+		
+		foreach ($annotationBag as $annotation) {
+			$this->assertInstanceOf('Omocha\Annotation', $annotation);
+		}
+		
+		$annotation = $annotationBag->get('Option');
+		$json = json_encode($annotation);
+		$this->assertEquals('{"name":"Option","argument":"output","value":"XML"}', $json);
+		$this->assertEquals('output', $annotation->getArgument());
+		
+		$options = $annotationBag->find('Option');
+		$this->assertCount(4, $options);
+		
+		$options = $annotationBag->find('Option', Filter::TYPE_NULL);
+		$this->assertCount(1, $options);
+		
+		$options = $annotationBag->find('Option', Filter::HAS_ARGUMENT);
+		$this->assertCount(3, $options);
+		
+		$options = $annotationBag->find('Option', Filter::NOT_HAS_ARGUMENT);
+		$this->assertCount(1, $options);
+		
+		$annotationBag = Omocha::getAnnotations($reflectionClass->getProperty('connection'));
+		$conn = $annotationBag->find('Config', Filter::HAS_ARGUMENT | Filter::TYPE_ARRAY);
+		$this->assertCount(1, $conn);
+		$this->assertEquals('MySQL', $conn[0]->getArgument());
+		
+		$conn = $annotationBag->filter(function ($annotation) {
+			return $annotation->getArgument() == 'SQLite';
+		});
+		$this->assertCount(1, $conn);
+		$this->assertEquals('database.db', $conn[0]->getValue());
+	}
 }
 ?>

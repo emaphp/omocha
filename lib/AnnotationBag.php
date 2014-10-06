@@ -90,7 +90,10 @@ class AnnotationBag implements \IteratorAggregate, \Countable, \JsonSerializable
 			//match value type
 			if ($filter & Filter::TYPE_ALL) {
 				$value = $annotation->getValue();
-				if (is_string($value)) {
+				if (is_null($value)) {
+					$flags |= Filter::TYPE_NULL;
+				}
+				elseif (is_string($value)) {
 					$flags |= Filter::TYPE_STRING;
 				}
 				elseif (is_int($value)) {
@@ -127,6 +130,22 @@ class AnnotationBag implements \IteratorAggregate, \Countable, \JsonSerializable
 		}
 		
 		return $annotations;
+	}
+	
+	/**
+	 * Filters elements with the given callback
+	 * @param \Closure $callback
+	 * @param boolean $reindex Reset indexes
+	 * @return array
+	 */
+	public function filter(\Closure $callback, $reindex = true) {
+		$result = array_filter($this->annotations, $callback);
+		
+		if ($reindex) {
+			$result = array_values($result);
+		}
+		
+		return $result;
 	}
 	
 	public function count() {

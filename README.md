@@ -14,7 +14,7 @@ Simple annotation parser for PHP
 ```json
 {
     "require": {
-        "omocha/omocha": "1.0.*"
+        "omocha/omocha": "1.1.*"
     }
 }
 ```
@@ -97,7 +97,7 @@ use Omocha\Filter;
  * @Option(output) XML
  * @Option(template) service.tpl
  * @Option(on_error) 404
- * @Option undefined
+ * @Option null
  */
 class Webservice {
     /**
@@ -120,7 +120,7 @@ foreach ($annotationBag as $annotation) {
 }
 
 //and JsonSerializable
-$json = json_serialize($annotationBag);
+$json = json_encode($annotationBag);
 
 //get first option
 $annotation = $annotationBag->get('Option');
@@ -137,8 +137,15 @@ count($argOptions); //returns 3
 
 //annotations could also be filtered by its value type
 $annotationBag = Omocha::getAnnotations($reflectionClass->getProperty('connection'));
-$connOptions = $annotationBag->find(Filter::HAS_ARGUMENT | Filter::TYPE_ARRAY);
+$connOptions = $annotationBag->find('Config', Filter::HAS_ARGUMENT | Filter::TYPE_ARRAY);
 $connOptions[0]->getArgument(); //returns 'MySQL'
+
+//using a custom filter
+$conn = $annotationBag->filter(function ($annotation) {
+    return $annotation->getArgument() == 'SQLite';
+});
+
+$conn[0]->getValue(); // returns 'database.db'
 ```
 
 ####License
