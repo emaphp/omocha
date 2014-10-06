@@ -338,6 +338,9 @@ class AnnotationBagTest extends \PHPUnit_Framework_TestCase {
 		$this->assertCount(1, $options);
 		
 		$annotationBag = Omocha::getAnnotations($reflectionClass->getProperty('connection'));
+		$conn = $annotationBag->get('Config');
+		$this->assertInternalType('array', $conn->getValue());
+		
 		$conn = $annotationBag->find('Config', Filter::HAS_ARGUMENT | Filter::TYPE_ARRAY);
 		$this->assertCount(1, $conn);
 		$this->assertEquals('MySQL', $conn[0]->getArgument());
