@@ -337,19 +337,21 @@ class AnnotationBagTest extends \PHPUnit_Framework_TestCase {
 		$options = $annotationBag->find('Option', Filter::NOT_HAS_ARGUMENT);
 		$this->assertCount(1, $options);
 		
-		$annotationBag = Omocha::getAnnotations($reflectionClass->getProperty('connection'));
-		$conn = $annotationBag->get('Config');
-		$this->assertInternalType('array', $conn->getValue());
-		
-		$conn = $annotationBag->find('Config', Filter::HAS_ARGUMENT | Filter::TYPE_ARRAY);
-		$this->assertCount(1, $conn);
-		$this->assertEquals('MySQL', $conn[0]->getArgument());
-		
-		$conn = $annotationBag->filter(function ($annotation) {
-			return $annotation->getArgument() == 'SQLite';
-		});
-		$this->assertCount(1, $conn);
-		$this->assertEquals('database.db', $conn[0]->getValue());
+		if (defined('JSON_PARSER_NOTSTRICT')) {
+			$annotationBag = Omocha::getAnnotations($reflectionClass->getProperty('connection'));
+			$conn = $annotationBag->get('Config');
+			$this->assertInternalType('array', $conn->getValue());
+			
+			$conn = $annotationBag->find('Config', Filter::HAS_ARGUMENT | Filter::TYPE_ARRAY);
+			$this->assertCount(1, $conn);
+			$this->assertEquals('MySQL', $conn[0]->getArgument());
+			
+			$conn = $annotationBag->filter(function ($annotation) {
+				return $annotation->getArgument() == 'SQLite';
+			});
+			$this->assertCount(1, $conn);
+			$this->assertEquals('database.db', $conn[0]->getValue());
+		}
 	}
 }
 ?>
